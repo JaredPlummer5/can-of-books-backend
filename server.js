@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 'use strict';
 
 require('dotenv').config();
