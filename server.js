@@ -61,6 +61,7 @@ app.get('/books', async (request, response) => {
         let description = req.body.description
         let status = req.body.status
 
+        
         // Connect to the database. The DATABASE_URL environment variable holds the connection string.
         // 'await' is used here because this operation is asynchronous and we need to ensure the connection is established before proceeding.
         await mongoose.connect(process.env.DATABASE_URL)
