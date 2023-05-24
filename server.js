@@ -108,7 +108,23 @@ app.get('/books', async (request, response) => {
         mongoose.disconnect();
     }
 
-});
+}).put('/books/:id', async (req, res) => {
+  try{
+    const id = req.params.id
+
+    await mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+    let result = await Book.findByIdAndUpdate(id)
+    if (!result) {
+        res.status(404).send('No book found with the given id, cant update!');
+        return;
+    }
+    res.send("Book has been updated!")
+  }catch(error){
+    res.status(500).send(error.message);
+  } finally {
+    mongoose.disconnect();
+  }
+})
 
 // Start our server listening on the specified PORT.
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
