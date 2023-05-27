@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 // Connect to the MongoDB database using mongoose to seed initial data.
-mongoose.connect(process.env.DATABASE_URL);
+mongoose.connect("mongodb://localhost:27017/PainBooks");
 
 //Requiring Books schema from the models folder
 const Book = require('./models/Books');

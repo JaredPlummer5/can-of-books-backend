@@ -111,9 +111,15 @@ app.get('/books', async (request, response) => {
 }).put('/books/:id', async (req, res) => {
   try{
     const id = req.params.id
+    const { title, description, status } = req.body; 
 
     await mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
-    let result = await Book.findByIdAndUpdate(id)
+    const result = await Book.findByIdAndUpdate(id, {
+        title: title,
+        description: description,
+        status: status
+      }, { new: true });
+
     if (!result) {
         res.status(404).send('No book found with the given id, cant update!');
         return;
