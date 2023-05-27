@@ -38,7 +38,8 @@ app.get('/test', (request, response) => {
 app.get('/books', async (request, response) => {
     try {
         // Connect to the MongoDB database using mongoose.
-        await mongoose.connect(process.env.DATABASE_URL)
+        await mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true 
+        })
 
         // Find all books in the database.
         const books = await Book.find()
@@ -64,7 +65,8 @@ app.get('/books', async (request, response) => {
         
         // Connect to the database. The DATABASE_URL environment variable holds the connection string.
         // 'await' is used here because this operation is asynchronous and we need to ensure the connection is established before proceeding.
-        await mongoose.connect(process.env.DATABASE_URL)
+        await mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true
+        })
 
         // Create a new book document in the database. The 'await' keyword is used because 'Book.create()' is an asynchronous function.
         let newBook = await Book.create({
@@ -89,7 +91,8 @@ app.get('/books', async (request, response) => {
         const id = req.params.id; // Get the id from the request parameters
 
         // Connect to the MongoDB database
-        await mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+        await mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true
+        });
 
         // Delete the book with the given id
         const result = await Book.findByIdAndDelete(id);
@@ -113,7 +116,9 @@ app.get('/books', async (request, response) => {
     const id = req.params.id
     const { title, description, status } = req.body; 
 
-    await mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+    await mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true
+       
+     });
     const result = await Book.findByIdAndUpdate(id, {
         title: title,
         description: description,
@@ -133,6 +138,8 @@ app.get('/books', async (request, response) => {
 })
 
 // Start our server listening on the specified PORT.
-app.listen(PORT, () => console.log(`listening on ${PORT}`));
+app.listen(PORT, () =>{ 
+
+    console.log(`listening on ${PORT}`)});
 
 
