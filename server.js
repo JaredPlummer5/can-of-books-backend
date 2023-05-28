@@ -17,11 +17,13 @@ app.get('/test', (request, response) => {
 app.get('/books', async (request, response) => {
     
     try {
+
         await mongoose.connect(process.env.DATABASE_URL, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
         const books = await Book.find();
+
         mongoose.disconnect();
         response.json(books);
     } catch (error) {
@@ -31,6 +33,7 @@ app.get('/books', async (request, response) => {
 }).post('/books', async (req, res) => {
     
     try {
+
         await mongoose.connect(process.env.DATABASE_URL, {
             useNewUrlParser: true,
             useUnifiedTopology: true
@@ -38,6 +41,7 @@ app.get('/books', async (request, response) => {
         let title = req.body.title;
         let description = req.body.description;
         let status = req.body.status;
+
 
         let newBook = await Book.create({
             title: title,
@@ -54,11 +58,13 @@ app.get('/books', async (request, response) => {
 }).delete('/books/:id', async (req, res) => {
     
     try {
+
         await mongoose.connect(process.env.DATABASE_URL, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
         const id = req.params.id;
+
 
         const result = await Book.findByIdAndDelete(id);
         if (!result) {
@@ -74,6 +80,7 @@ app.get('/books', async (request, response) => {
         mongoose.disconnect();
     }
 }).put('/books/:id', async (req, res) => {
+
     
     try {
         await mongoose.connect(process.env.DATABASE_URL, {
@@ -89,6 +96,7 @@ app.get('/books', async (request, response) => {
             description: description,
             status: status
         }, { new: true });
+
 
         if (!updatedBook) {
             res.status(404).send('No book found with the given id');
