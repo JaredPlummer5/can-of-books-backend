@@ -44,7 +44,6 @@ app.get('/books', async (request, response) => {
             description: description,
             status: status
         });
-
         res.send(newBook);
         mongoose.disconnect();
     } catch (error) {
@@ -65,8 +64,9 @@ app.get('/books', async (request, response) => {
             res.status(404).send('No book found with the given id');
             return;
         }
+        const booksLeft = await Book.find()
 
-        res.send('Book deleted successfully');
+        res.send(booksLeft);
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');
@@ -94,8 +94,8 @@ app.get('/books', async (request, response) => {
             res.status(404).send('No book found with the given id');
             return;
         }
-
-        res.send(updatedBook);
+        const booksWithUpdate = await Book.find()
+        res.send(booksWithUpdate);
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');
