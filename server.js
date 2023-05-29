@@ -17,13 +17,11 @@ app.get('/test', (request, response) => {
 app.get('/books', async (request, response) => {
     
     try {
-
         await mongoose.connect(process.env.DATABASE_URL, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
         const books = await Book.find();
-
         mongoose.disconnect();
         response.json(books);
     } catch (error) {
@@ -33,7 +31,6 @@ app.get('/books', async (request, response) => {
 }).post('/books', async (req, res) => {
     
     try {
-
         await mongoose.connect(process.env.DATABASE_URL, {
             useNewUrlParser: true,
             useUnifiedTopology: true
@@ -42,13 +39,11 @@ app.get('/books', async (request, response) => {
         let description = req.body.description;
         let status = req.body.status;
 
-
         let newBook = await Book.create({
             title: title,
             description: description,
             status: status
         });
-
         res.send(newBook);
         mongoose.disconnect();
     } catch (error) {
@@ -58,21 +53,20 @@ app.get('/books', async (request, response) => {
 }).delete('/books/:id', async (req, res) => {
     
     try {
-
         await mongoose.connect(process.env.DATABASE_URL, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
         const id = req.params.id;
 
-
         const result = await Book.findByIdAndDelete(id);
         if (!result) {
             res.status(404).send('No book found with the given id');
             return;
         }
+        const booksLeft = await Book.find()
 
-        res.send('Book deleted successfully');
+        res.send(booksLeft);
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');
@@ -80,7 +74,6 @@ app.get('/books', async (request, response) => {
         mongoose.disconnect();
     }
 }).put('/books/:id', async (req, res) => {
-
     
     try {
         await mongoose.connect(process.env.DATABASE_URL, {
@@ -97,13 +90,12 @@ app.get('/books', async (request, response) => {
             status: status
         }, { new: true });
 
-
         if (!updatedBook) {
             res.status(404).send('No book found with the given id');
             return;
         }
-
-        res.send(updatedBook);
+        const booksWithUpdate = await Book.find()
+        res.send(booksWithUpdate);
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');
