@@ -2,13 +2,15 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 // Connect to the MongoDB database using mongoose to seed initial data.
-mongoose.connect(process.env.DATABASE_URL);
+
 
 //Requiring Books schema from the models folder
 const Book = require('./models/Books');
 
 // Seed the database with some books.
 async function seed() {
+    try{
+      await mongoose.connect(process.env.DATABASE_URL);
     // Create a new book in the database.a
     await Book.create({
         title: 'Hunger Games',
@@ -27,14 +29,22 @@ async function seed() {
     await Book.create({
         title: 'Divergent',
         description: 'In a dystopian society divided into factions based on virtues, a young girl named Tris discovers she is Divergent, possessing multiple virtues. As she navigates a treacherous initiation process and uncovers a plot to overthrow the system, Tris must confront her own identity and fight for her freedom in Veronica Roth’s electrifying novel, ‘Divergent’.',
-        status: 'Published',
-    });
+        status: 'Published',  
+        });  
+    }catch(error){
+        console.log(error)
+    }finally{
+        console.log('Books Saved');
+        mongoose.disconnect();  
+    }
+    
+  
 
     // Log a success message to the console after the books have been created.
-    console.log('Books Saved');
+  
 
     // Disconnect from the database.
-    mongoose.disconnect();
+   
 }
 
 // Call the seed function to populate the database.
