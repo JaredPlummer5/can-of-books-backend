@@ -4,10 +4,11 @@ const cors = require('cors');
 const Book = require('./models/Books');
 const mongoose = require('mongoose');
 const Seed = require("./seed");
-
+const verifyUser = require('./auth/authorize');
 const app = express();
 app.use(cors());
 app.use(express.json());
+//app.use(verifyUser())
 const PORT = process.env.PORT || 3001;
 //mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 app.get('/test', (request, response) => {
@@ -22,6 +23,7 @@ app.get('/books', async (request, response) => {
             useUnifiedTopology: true
         });
         const books = await Book.find();
+        console.log(request.headers.authorization)
         mongoose.disconnect();
         response.json(books);
     } catch (error) {
@@ -65,6 +67,7 @@ app.get('/books', async (request, response) => {
             return;
         }
         const booksLeft = await Book.find()
+        console.log(req.headers.authorization)
 
         res.send(booksLeft);
     } catch (error) {
@@ -102,6 +105,5 @@ app.get('/books', async (request, response) => {
     } finally {
         mongoose.disconnect();
     }
-});
-
+})
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
