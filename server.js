@@ -5,6 +5,7 @@ const Book = require('./models/Books');
 const mongoose = require('mongoose');
 const Seed = require("./seed");
 const verifyUser = require('./auth/authorize.js');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 app.use(cors());
@@ -17,20 +18,23 @@ app.get('/test', (request, response) => {
 });
 
 
-app.get('/books', async (request, response) => {
-    
+app.get('/books', async (req, res) => {
+    console.log(req.user)
+    let decoded = jwt.decode(req.headers.authorization)
+  console.log(decoded, "wewewewew")
     try {
         await mongoose.connect(process.env.DATABASE_URL, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        const books = await Book.find({ email: req.user.email });
+        const books = await Book.find({ email: req.user?.email });
         mongoose.disconnect();
-        response.json(books);
+        res.json(books);
     } catch (error) {
         console.log(error);
-        response.status(500).send('Internal Server Error');
+        res.status(500).send('Internal Server Error');
     }
+    
 }).post('/books', async (req, res) => {
     
     try {
