@@ -4,39 +4,47 @@ const cors = require('cors');
 const Book = require('./models/Books');
 const mongoose = require('mongoose');
 const Seed = require("./seed");
-const verifyUser = require('./auth/authorize');
 const app = express();
+const { auth } = require("express-oauth2-jwt-bearer");
 app.use(cors());
 app.use(express.json());
-//app.use(verifyUser())
+
+
+const checkJwt = auth({
+    audience: "https://dev-swwedz5mied7hhq5.us.auth0.com/api/v2/",
+    issuerBaseURL: `https://${process.env.DOMAIN_URL}/`,
+    algorithms: ["RS256"]
+});
+
 const PORT = process.env.PORT || 3001;
 //mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
-app.get('/test', (request, response) => {
+app.get('/test', checkJwt, (request, response) => {
+    console.log(request)
     response.send('test request received');
 });
 
-app.get('/books', async (request, response) => {
-    
+app.get('/books', checkJwt, async (request, response) => {
     try {
         await mongoose.connect(process.env.DATABASE_URL, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
         const books = await Book.find();
-        console.log(request.headers.authorization)
+        console.log(request)
+        //console.log(request.headers.authorization.user)
         mongoose.disconnect();
         response.json(books);
     } catch (error) {
         console.log(error);
         response.status(500).send('Internal Server Error');
     }
-}).post('/books', async (req, res) => {
-    
+}).post('/books',checkJwt, async (req, res) => {
     try {
         await mongoose.connect(process.env.DATABASE_URL, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
+        console.log(request)
         let title = req.body.title;
         let description = req.body.description;
         let status = req.body.status;
@@ -52,8 +60,7 @@ app.get('/books', async (request, response) => {
         console.log(error);
         res.status(500).send('Internal Server Error');
     }
-}).delete('/books/:id', async (req, res) => {
-    
+}).delete('/books/:id', checkJwt, async (req, res) => {
     try {
         await mongoose.connect(process.env.DATABASE_URL, {
             useNewUrlParser: true,
@@ -67,7 +74,7 @@ app.get('/books', async (request, response) => {
             return;
         }
         const booksLeft = await Book.find()
-        console.log(req.headers.authorization)
+    
 
         res.send(booksLeft);
     } catch (error) {
@@ -76,8 +83,7 @@ app.get('/books', async (request, response) => {
     } finally {
         mongoose.disconnect();
     }
-}).put('/books/:id', async (req, res) => {
-    
+}).put('/books/:id',checkJwt, async (req, res) => {
     try {
         await mongoose.connect(process.env.DATABASE_URL, {
             useNewUrlParser: true,
@@ -85,7 +91,7 @@ app.get('/books', async (request, response) => {
         });
         const id = req.params.id;
         const { title, description, status } = req.body;
-
+        
 
         const updatedBook = await Book.findByIdAndUpdate(id, {
             title: title,
@@ -107,3 +113,4 @@ app.get('/books', async (request, response) => {
     }
 })
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
+
