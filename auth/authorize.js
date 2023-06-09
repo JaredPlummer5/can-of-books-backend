@@ -16,6 +16,7 @@ async function verifyUser(request, response, next) {
     let key = await getKey()
     jwt.verify(token, key, {}, valid);
   } catch (error) {
+      console.log(error)
     next('Not Authorized');
   }
 }
