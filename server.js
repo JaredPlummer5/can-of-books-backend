@@ -47,8 +47,10 @@ app.get('/test', async (req, res) => {
     }
 });
 
+
 // Route to get books
 app.get('/books', async (req, res) => {
+
     try {
         await mongoose.connect(process.env.DATABASE_URL, {
             useNewUrlParser: true,
@@ -63,20 +65,24 @@ app.get('/books', async (req, res) => {
                 authorization: `Bearer ${accessToken}` // Set the access token in the authorization header
             }
         });
+
         const userinfo = user.data; // Get the user information from the response
 
         const books = await Book.find({ userEmail: userinfo.email }); // Query books based on user email
 
         mongoose.disconnect(); // Disconnect from the database
         res.json(books); // Send the books as a JSON response
+
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');
     }
+
 });
 
 // Route to add a new book
 app.post('/books', async (req, res) => {
+
     try {
         await mongoose.connect(process.env.DATABASE_URL, {
             useNewUrlParser: true,
